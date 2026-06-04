@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Velora Marketplace{% endblock %}</title>
+    
+    <!-- Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap for Grid -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --accent: #ff4d00;
+            --accent-glow: rgba(255, 77, 0, 0.15);
+            --bg: #050505;
+            --card-bg: #111113;
+            --card-hover: #161619;
+            --text: #ffffff;
+            --muted: rgba(255, 255, 255, 0.6);
+            --border: rgba(255, 255, 255, 0.12);
+            --border-hover: rgba(255, 255, 255, 0.25);
+            --glass: rgba(5, 5, 5, 0.8);
+            --success: #22c55e;
+            --error: #ef4444;
+            --info: #3b82f6;
+        }
+
+        /* Override Bootstrap's muted text color for dark mode */
+        .text-muted {
+            color: var(--muted) !important;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding-bottom: 40px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- Custom Cursor --- */
+        .cursor-dot {
+            width: 6px;
+            height: 6px;
+            background: #ffffff;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        .cursor-follower {
+            width: 32px;
+            height: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, border-color 0.2s, background-color 0.2s;
+        }
+
+        /* Hide default cursor on desktop devices */
+        @media (min-width: 992px) {
+            body {
+                cursor: none;
+            }
+            a, button, [role="button"], input, select, textarea, .card-premium {
+                cursor: none;
+            }
+        }
+
+        /* --- Noise Grain Overlay --- */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: url("https://grainy-gradients.vercel.app/noise.svg");
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 9998;
+        }
+
+        /* --- Dynamic Glowing Backlights (Axiom Style) --- */
+        .bg-blobs {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -2;
+            overflow: hidden;
+            pointer-events: none;
+            background: #050505;
+        }
+
+        .blob {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            filter: blur(140px);
+            opacity: 0.15;
+            mix-blend-mode: screen;
+            animation: float 25s infinite alternate;
+        }
+
+        .blob-1 {
+            top: -200px;
+            right: -100px;
+            background: radial-gradient(circle, rgba(0, 150, 255, 0.35) 0%, transparent 70%);
+        }
+
+        .blob-2 {
+            bottom: -200px;
+            left: -200px;
+            background: radial-gradient(circle, rgba(255, 77, 0, 0.25) 0%, transparent 70%);
+            animation-delay: -7s;
+        }
+
+        .blob-3 {
+            top: 35%;
+            left: 25%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(120, 0, 255, 0.2) 0%, transparent 70%);
+            animation-delay: -12s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(80px, 60px) scale(1.08); }
+            100% { transform: translate(-40px, 100px) scale(0.95); }
+        }
+
+        /* --- Watermark Text --- */
+        .watermark {
+            position: fixed;
+            font-size: 24vw;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.007);
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.015);
+            text-transform: uppercase;
+            z-index: -1;
+            pointer-events: none;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        .wm-top { top: 10vh; left: -5vw; transform: rotate(-5deg); }
+        .wm-bottom { bottom: 10vh; right: -5vw; transform: rotate(5deg); }
+
+        /* --- Navbar --- */
+        .navbar-custom {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 50px;
+            transition: padding 0.3s, background-color 0.3s;
+        }
+
+        .navbar-custom.scrolled {
+            padding: 12px 50px;
+            background: rgba(5, 5, 5, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .logo {
+            font-weight: 900;
+            font-size: 1.6rem;
+            letter-spacing: -1.5px;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .logo span { color: var(--accent); }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link-custom {
+            text-decoration: none;
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .nav-link-custom::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: #ffffff;
+            transition: 0.3s;
+        }
+
+        .nav-link-custom:hover::after, .nav-link-custom.active::after {
+            width: 100%;
+        }
+
+        .nav-link-custom:hover { color: #ffffff; }
+        .nav-link-custom.active { color: #ffffff; }
+
+        .nav-user-badge {
+            background: #111113;
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 6px 16px 6px 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            transition: 0.3s;
+        }
+
+        .nav-user-badge:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            background: #161619;
+            color: var(--text);
+        }
+
+        .nav-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* --- Flash Messages --- */
+        .flash-container {
+            position: fixed;
+            top: 90px;
+            right: 24px;
+            z-index: 5000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 360px;
+        }
+
+        .flash-msg {
+            padding: 14px 20px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .flash-success { background: rgba(34, 197, 94, 0.2); border-color: rgba(34, 197, 94, 0.4); color: #4ade80; }
+        .flash-error   { background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.4); color: #f87171; }
+        .flash-info    { background: rgba(59, 130, 246, 0.2); border-color: rgba(59, 130, 246, 0.4); color: #60a5fa; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* --- Premium Buttons --- */
+        .btn-premium {
+            background: #ffffff;
+            color: #050505;
+            border-radius: 50px;
+            padding: 12px 28px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            border: 1px solid #ffffff;
+            transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            text-decoration: none;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+
+        .btn-premium:hover {
+            background: transparent;
+            color: #ffffff;
+            border-color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-premium {
+            background: transparent;
+            color: #ffffff;
+            border-radius: 50px;
+            padding: 12px 28px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            text-decoration: none;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+
+        .btn-outline-premium:hover {
+            border-color: #ffffff;
+            background: rgba(255,255,255,0.05);
+            transform: translateY(-2px);
+        }
+
+        .btn-accent {
+            background: var(--accent);
+            color: white;
+            border-radius: 50px;
+            padding: 12px 28px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            border: 1px solid var(--accent);
+            transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            text-decoration: none;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+
+        .btn-accent:hover {
+            background: transparent;
+            color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px var(--accent-glow);
+        }
+
+        .section-title {
+            font-weight: 900;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            letter-spacing: -2px;
+            text-transform: uppercase;
+        }
+
+        /* --- Scroll Reveal Animations --- */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal-up.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Staggered Lists --- */
+        .stagger-item {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .stagger-item.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        {% block extra_css %}{% endblock %}
+    </style>
+</head>
+<body class="fade-in">
+
+    <!-- Custom Cursor Follower -->
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-follower" id="cursorFollower"></div>
+
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="watermark wm-top">VELORA</div>
+    <div class="watermark wm-bottom">STREET</div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-container" id="flashContainer">
+        {% for category, message in messages %}
+        <div class="flash-msg flash-{{ category }}" onclick="this.remove()">
+            {% if category == 'success' %}✓{% elif category == 'error' %}✗{% else %}ℹ{% endif %}
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    <script>
+        setTimeout(() => {
+            const fc = document.getElementById('flashContainer');
+            if (fc) fc.style.opacity = '0', fc.style.transition = '0.5s', setTimeout(() => fc.remove(), 500);
+        }, 4000);
+    </script>
+    {% endif %}
+    {% endwith %}
+
+    <nav class="navbar-custom d-flex justify-content-between align-items-center" id="navbar">
+        <a href="/" class="logo">VELORA<span>.</span></a>
+        
+        <div class="nav-links">
+            <a href="/" class="nav-link-custom {% if request.path == '/' %}active{% endif %}">HOME</a>
+            <a href="/explore" class="nav-link-custom {% if request.path == '/explore' %}active{% endif %}">EXPLORE</a>
+            <a href="/contact" class="nav-link-custom {% if request.path == '/contact' %}active{% endif %}">CONTACT</a>
+            {% if current_user %}
+            <a href="/orders" class="nav-link-custom {% if request.path == '/orders' %}active{% endif %}">ORDERS</a>
+            {% endif %}
+        </div>
+        
+        <div class="d-flex align-items-center gap-3">
+            {% if current_user %}
+                <a href="/post" class="btn-accent d-none d-md-block">SELL NOW</a>
+                <a href="/profile" class="nav-user-badge">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed={{ current_user.avatar_seed }}" class="nav-avatar" alt="avatar">
+                    {{ current_user.username }}
+                </a>
+            {% else %}
+                <a href="/login" class="nav-link-custom {% if request.path == '/login' %}active{% endif %}">LOGIN</a>
+                <a href="/register" class="btn-premium d-none d-md-block">JOIN FREE</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Motion JS Engine -->
+    <script>
+        // --- 1. Custom Smooth Cursor Follower (LERP) ---
+        const dot = document.getElementById('cursorDot');
+        const follower = document.getElementById('cursorFollower');
+
+        let mouseX = -100, mouseY = -100;
+        let followerX = -100, followerY = -100;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            dot.style.left = mouseX + 'px';
+            dot.style.top = mouseY + 'px';
+        });
+
+        function animateCursor() {
+            followerX += (mouseX - followerX) * 0.15;
+            followerY += (mouseY - followerY) * 0.15;
+            
+            follower.style.left = followerX + 'px';
+            follower.style.top = followerY + 'px';
+            
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Cursor State changes on Hover
+        document.addEventListener('mouseover', (e) => {
+            const target = e.target.closest('a, button, [role="button"], input, select, textarea, .card-premium, .cat-label');
+            if (target) {
+                follower.style.width = '48px';
+                follower.style.height = '48px';
+                follower.style.borderColor = 'var(--accent)';
+                follower.style.backgroundColor = 'rgba(255, 77, 0, 0.08)';
+                dot.style.backgroundColor = 'var(--accent)';
+            } else {
+                follower.style.width = '32px';
+                follower.style.height = '32px';
+                follower.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                follower.style.backgroundColor = 'transparent';
+                dot.style.backgroundColor = '#ffffff';
+            }
+        });
+
+        // --- 2. Scroll Shrink Header ---
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // --- 3. Intersection Observer for Scroll Reveals ---
+        const revealOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, revealOptions);
+
+        document.querySelectorAll('.reveal-up').forEach(el => observer.observe(el));
+
+        // Staggered list grid reveals
+        const staggerGrids = document.querySelectorAll('.stagger-grid');
+        staggerGrids.forEach(grid => {
+            const items = grid.querySelectorAll('.stagger-item');
+            const gridObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        items.forEach((item, index) => {
+                            setTimeout(() => {
+                                item.classList.add('active');
+                            }, index * 100);
+                        });
+                        observer.unobserve(grid.target);
+                    }
+                });
+            }, revealOptions);
+            gridObserver.observe(grid);
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

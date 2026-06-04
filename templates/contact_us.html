@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us | Velora Support{% endblock %}
+
+{% block extra_css %}
+.contact-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 40px;
+    padding: 50px 40px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+}
+
+.form-label-custom {
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+    display: block;
+}
+
+.input-custom {
+    width: 100%;
+    padding: 16px 20px;
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    background: #09090b;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    outline: none;
+    color: #ffffff;
+}
+
+.input-custom:focus {
+    border-color: #ffffff;
+    background: #111113;
+}
+
+textarea.input-custom {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.contact-info-block h5 {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.contact-info-block p {
+    color: #ffffff;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.social-link {
+    color: #ffffff;
+    font-weight: 700;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    font-size: 0.9rem;
+}
+
+.social-link:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 900px;">
+    <div class="reveal-up text-center mb-5">
+        <h1 class="section-title">GET IN TOUCH</h1>
+        <p class="text-muted" style="max-width: 500px; margin: 15px auto 0;">Have questions about a drop? Need help with your order? We're here for the culture.</p>
+    </div>
+    
+    <div class="row g-5">
+        <div class="col-md-7 reveal-up" style="transition-delay: 0.1s;">
+            <div class="contact-card">
+                <form>
+                    <div class="mb-4">
+                        <label class="form-label-custom">NAME</label>
+                        <input type="text" class="input-custom" placeholder="Your Name" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label-custom">EMAIL</label>
+                        <input type="email" class="input-custom" placeholder="your@email.com" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label-custom">MESSAGE</label>
+                        <textarea class="input-custom" placeholder="How can we help?" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-premium w-100 py-3 mt-2">SEND MESSAGE</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="col-md-5 d-flex flex-column justify-content-between py-3 reveal-up" style="transition-delay: 0.2s;">
+            <div class="contact-info-block mb-4">
+                <h5 class="mb-3">EMAIL US</h5>
+                <p>support@velora.com<br>creators@velora.com</p>
+            </div>
+            
+            <div class="contact-info-block mb-4">
+                <h5 class="mb-3">VISIT OUR STUDIO</h5>
+                <p>Street Culture Hub, 102<br>Indiranagar, Bangalore<br>India 560038</p>
+            </div>
+            
+            <div class="contact-info-block">
+                <h5 class="mb-3">FOLLOW US</h5>
+                <div class="d-flex gap-4">
+                    <a href="#" class="social-link">Instagram</a>
+                    <a href="#" class="social-link">X</a>
+                    <a href="#" class="social-link">Discord</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(() => {
+        document.querySelectorAll('.reveal-up').forEach(el => el.classList.add('active'));
+    }, 100);
+});
+</script>
+{% endblock %}
