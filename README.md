@@ -1,10 +1,10 @@
-# Velora Marketplace ⚡
+# Velora Marketplace 
 
 Velora is a premium, high-contrast dark-themed streetwear marketplace built using **Flask** and **SQLite3**, designed with a fluid interactive motion system inspired by modern aesthetics.
 
 ---
 
-## 🎨 Visual & Motion Profile
+##  Visual & Motion Profile
 *   **Axiom-Inspired Dark Theme:** High-contrast layout using deep blacks (`#050505`), clean structural card frames (`#111113`), and fine white borders.
 *   **Glow Ambient Lighting:** Dynamic radial backdrop pools (Teal, Orange, Purple) floating and breathing in the background.
 *   **LERP Cursor Follower:** Butter-smooth mouse tracking dot and ring that dynamically scales and glows when hovering over interactive elements.
@@ -13,7 +13,7 @@ Velora is a premium, high-contrast dark-themed streetwear marketplace built usin
 
 ---
 
-## ⚙️ Key Features
+##  Key Features
 *   **User Accounts & Auth:** Secure registration, login, and sessions using SHA-256 password hashing.
 *   **User Listings:** Users can post their streetwear listings with category, price, WhatsApp details, and image preview.
 *   **Real Transactions:** Instant copping with transaction logging, order status, and item auto-marking as `SOLD`.
@@ -21,7 +21,7 @@ Velora is a premium, high-contrast dark-themed streetwear marketplace built usin
 
 ---
 
-## 🚀 Quick Start & Installation
+##  Quick Start & Installation
 
 ### 1. Clone the repository
 ```bash
@@ -52,7 +52,7 @@ Visit the local server at: **[http://127.0.0.1:5000](http://127.0.0.1:5000)**
 
 ---
 
-## 👤 Test Credentials
+##  Test Credentials
 You can log in with any of these sample accounts to explore order history and active profiles:
 
 *   **Password for all accounts:** `password123`
